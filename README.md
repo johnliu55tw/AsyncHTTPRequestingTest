@@ -49,3 +49,11 @@ $ bash run_uwsgi.sh
 Which will start the server listening on `127.0.0.1:5000` with HTTP Keep-Alive enabled. Noted that if you change the name of the Flask application (`DockingAPIServer.py`), or the code, you have to specify the correct `--wsgi-file` and `--callable` option.
 
 Noted that I installed uWSGI by `pip`. I've encounter some problem (`--wsgi-file` option not available) by install uWSGI by `pacman`.
+
+## The Connection Test
+
+To Be Continue...
+
+## Conclusion
+
+To Be Continue...
