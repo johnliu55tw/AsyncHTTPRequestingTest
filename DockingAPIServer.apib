@@ -1,0 +1,105 @@
+FORMAT: 1A
+
+# Docking API
+
+The API of getting information from the `DockingAPIServer.py` server.
+
+# Group Users
+
+## Users Collection [/users{?type,name}]
+
+### List All Users [GET]
+
+* Parameters
+
+    * type: `nurse` (string, optional) - Type of the user.
+    
+    * name: `John` (string, optional) - Name of the user.
+
+* Response 200 (application/json)
+
+        [
+            {
+                "name": "John Liu",
+                "id": "1",
+                "type": "nurse"
+            },
+            {
+                "name": "Jordan Lin",
+                "id": "2",
+                "type": "manager"
+            }
+        ]
+        
+## User [/users/{userId}]
+
+* Parameters
+
+    * userId: `1` (string) - The ID of the user
+
+### View User Detail [GET]
+
+* Response 200 (application/json)
+
+        {
+            "name": "John Liu",
+            "id": "1",
+            "type": "nurse"
+        }
+        
+* Response 404 (application/json)
+
+        {
+            "type": "Not Found"
+            "message": "User ID cannot be found."
+        }
+        
+# Group Patients
+
+## Patients [/patients{?name,nurseId}]
+
+### List All Patients [GET]
+
+* Parameters
+
+    * name: `Andy` (string, optional) - Name of the patient
+    
+    * nurseId: `1` (string, optional) - Select patients took care by the nurse
+    
+* Response 200 (application/json)
+
+        [
+            {
+                "name": "Andy Ziemmer",
+                "id": "1",
+                "nurseId": "1",
+            },
+            {
+                "name": "Nick Omar",
+                "id": "2",
+                "nurseId": "2",
+            }
+        ]
+        
+## Patient [/patients/{patientId}]
+
+* Parameters
+
+    * patientId: `1` (string) - The id of the patient
+
+### View Patient Detail [GET]
+
+* Response 200 (application/json)
+
+        {
+            "name": "Andy Ziemmer",
+            "id": "1",
+            "nurseId": "1",
+        }
+        
+* Response 404 (application/json)
+
+        {
+            "type": "Not Found"
+            "message": "User ID cannot be found."
+        }
