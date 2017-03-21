@@ -10,6 +10,11 @@ import random
 HOST = "http://localhost:5000"
 
 
+def getSalespersonNameList():
+    users = reqs.get(HOST + "/users", params={"role": "sales"}).json()
+    return [user["name"] for user in users]
+
+
 def syncGetCustomersFromSales(salesName):
     session = reqs.Session()
     sales = session.get(HOST + "/users", params={"name": salesName}).json()
@@ -61,6 +66,7 @@ def asynchronous(names):
 
 
 if __name__ == "__main__":
+    # Timing for single request
     print("Timing for synchronous method...")
     firstTime = time.time()
     syncResult = syncGetCustomersFromSales("John")
@@ -78,10 +84,12 @@ if __name__ == "__main__":
 
     assert syncResult == asyncResult
 
+    # Timing for multiple requests
+    salesNameList = getSalespersonNameList()
+    randomSalesNames = [random.choice(salesNameList) for _ in range(10)]
     print("Timing for synchronous method in multiple calls...")
-    salesNames = [random.choice(["John", "William"]) for _ in range(10)]
     firstTime = time.time()
-    syncResult = synchronous(salesNames)
+    syncResult = synchronous(randomSalesNames)
     endTime = time.time()
     print("Synchronous method takes: {}s".format(endTime - firstTime))
 
@@ -89,7 +97,7 @@ if __name__ == "__main__":
 
     print("Timing for asynchronous method in multiple calls...")
     firstTime = time.time()
-    asyncResult = loop.run_until_complete(asynchronous(salesNames))
+    asyncResult = loop.run_until_complete(asynchronous(randomSalesNames))
     endTime = time.time()
     print("Asynchronous method takes: {}s".format(endTime - firstTime))
 
