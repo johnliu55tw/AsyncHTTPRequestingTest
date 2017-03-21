@@ -10,52 +10,52 @@ import random
 HOST = "http://localhost:5000"
 
 
-def syncGetPatientsFromNurse(nurseName):
+def syncGetCustomersFromSales(salesName):
     session = reqs.Session()
-    nurses = session.get(HOST + "/users", params={"name": nurseName}).json()
-    if len(nurses) == 0:
-        raise ValueError("Nurse {} cannot be found from the server".format(
-            nurseName))
+    sales = session.get(HOST + "/users", params={"name": salesName}).json()
+    if len(sales) == 0:
+        raise ValueError("Sales {} cannot be found from the server".format(
+            salesName))
 
-    firstMatchedId = nurses[0]["id"]
+    firstMatchedId = sales[0]["id"]
 
-    patients = session.get(HOST + "/patients",
-                           params={"nurseId": firstMatchedId}).json()
-    if len(patients) == 0:
-        raise ValueError("Nurse {} has no patients!".format(nurseName))
+    customers = session.get(HOST + "/customers",
+                            params={"salesId": firstMatchedId}).json()
+    if len(customers) == 0:
+        raise ValueError("Sales {} has no customers!".format(salesName))
 
-    return patients
+    return customers
 
 
-async def asyncGetPatientsFromNurse(nurseName):
+async def asyncGetCustomersFromSales(salesName):
     async with aiohttp.ClientSession() as session:
         resp = await session.get(HOST + "/users",
-                                 params={"name": nurseName})
-        nurses = await resp.json()
-        if len(nurses) == 0:
-            raise ValueError("Nurse {} cannot be found from the server".format(
-                nurseName))
+                                 params={"name": salesName})
+        sales = await resp.json()
+        if len(sales) == 0:
+            raise ValueError("Sales {} cannot be found from the server".format(
+                salesName))
 
-        firstMatchedId = nurses[0]["id"]
+        firstMatchedId = sales[0]["id"]
 
-        resp = await session.get(HOST + "/patients",
-                                 params={"nurseId": firstMatchedId})
-        patients = await resp.json()
-        if len(patients) == 0:
-            raise ValueError("Nurse {} has no patients!".format(nurseName))
+        resp = await session.get(HOST + "/customers",
+                                 params={"salesId": firstMatchedId})
+        customers = await resp.json()
+        if len(customers) == 0:
+            raise ValueError("Sales {} has no customers!".format(salesName))
 
-        return patients
+        return customers
 
 
 def synchronous(names):
     result = list()
     for name in names:
-        result.append(syncGetPatientsFromNurse(name))
+        result.append(syncGetCustomersFromSales(name))
     return result
 
 
 def asynchronous(names):
-    tasks = asyncio.gather(*[asyncGetPatientsFromNurse(name)
+    tasks = asyncio.gather(*[asyncGetCustomersFromSales(name)
                              for name in names])
     return tasks
 
@@ -63,7 +63,7 @@ def asynchronous(names):
 if __name__ == "__main__":
     print("Timing for synchronous method...")
     firstTime = time.time()
-    syncResult = syncGetPatientsFromNurse("John")
+    syncResult = syncGetCustomersFromSales("John")
     endTime = time.time()
     print("Synchronous method takes: {}s".format(endTime - firstTime))
 
@@ -72,16 +72,16 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     print("Timing for asynchronous method...")
     firstTime = time.time()
-    asyncResult = loop.run_until_complete(asyncGetPatientsFromNurse("John"))
+    asyncResult = loop.run_until_complete(asyncGetCustomersFromSales("John"))
     endTime = time.time()
     print("Asynchronous method takes: {}s".format(endTime - firstTime))
 
     assert syncResult == asyncResult
 
     print("Timing for synchronous method in multiple calls...")
-    nurseNames = [random.choice(["John", "William"]) for _ in range(10)]
+    salesNames = [random.choice(["John", "William"]) for _ in range(10)]
     firstTime = time.time()
-    syncResult = synchronous(nurseNames)
+    syncResult = synchronous(salesNames)
     endTime = time.time()
     print("Synchronous method takes: {}s".format(endTime - firstTime))
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     print("Timing for asynchronous method in multiple calls...")
     firstTime = time.time()
-    asyncResult = loop.run_until_complete(asynchronous(nurseNames))
+    asyncResult = loop.run_until_complete(asynchronous(salesNames))
     endTime = time.time()
     print("Asynchronous method takes: {}s".format(endTime - firstTime))
 

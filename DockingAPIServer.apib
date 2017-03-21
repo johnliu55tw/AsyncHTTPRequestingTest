@@ -2,7 +2,7 @@ FORMAT: 1A
 
 # Docking API
 
-The API of getting information from the `DockingAPIServer.py` server.
+The API of getting information from the `SimpleServer.py` server.
 
 # Group Users
 
@@ -12,8 +12,8 @@ The API of getting information from the `DockingAPIServer.py` server.
 
 * Parameters
 
-    * type: `nurse` (string, optional) - Type of the user.
-    
+    * type: `manager` (string, optional) - Type of the user.
+
     * name: `John` (string, optional) - Name of the user.
 
 * Response 200 (application/json)
@@ -22,7 +22,7 @@ The API of getting information from the `DockingAPIServer.py` server.
             {
                 "name": "John Liu",
                 "id": "1",
-                "type": "nurse"
+                "type": "sales"
             },
             {
                 "name": "Jordan Lin",
@@ -30,7 +30,7 @@ The API of getting information from the `DockingAPIServer.py` server.
                 "type": "manager"
             }
         ]
-        
+
 ## User [/users/{userId}]
 
 * Parameters
@@ -44,62 +44,62 @@ The API of getting information from the `DockingAPIServer.py` server.
         {
             "name": "John Liu",
             "id": "1",
-            "type": "nurse"
+            "type": "sales"
         }
-        
+
 * Response 404 (application/json)
 
         {
             "type": "Not Found"
             "message": "User ID cannot be found."
         }
-        
-# Group Patients
 
-## Patients [/patients{?name,nurseId}]
+# Group Customers
 
-### List All Patients [GET]
+## Customers [/customers{?name,salesId}]
+
+### List All Customers [GET]
 
 * Parameters
 
-    * name: `Andy` (string, optional) - Name of the patient
-    
-    * nurseId: `1` (string, optional) - Select patients took care by the nurse
-    
+    * name: `Andy` (string, optional) - Name of the customer
+
+    * salesId: `1` (string, optional) - Search customers by the responsible salesperson's id
+
 * Response 200 (application/json)
 
         [
             {
                 "name": "Andy Ziemmer",
                 "id": "1",
-                "nurseId": "1",
+                "salesId": "1",
             },
             {
                 "name": "Nick Omar",
                 "id": "2",
-                "nurseId": "2",
+                "salesId": "2",
             }
         ]
-        
-## Patient [/patients/{patientId}]
+
+## Customer [/customers/{customerId}]
 
 * Parameters
 
-    * patientId: `1` (string) - The id of the patient
+    * customerId: `1` (string) - The id of the customer
 
-### View Patient Detail [GET]
+### View Customer Detail [GET]
 
 * Response 200 (application/json)
 
         {
             "name": "Andy Ziemmer",
             "id": "1",
-            "nurseId": "1",
+            "customerId": "1",
         }
-        
+
 * Response 404 (application/json)
 
         {
             "type": "Not Found"
-            "message": "User ID cannot be found."
+            "message": "Customer ID cannot be found."
         }

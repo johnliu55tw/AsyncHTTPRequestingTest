@@ -38,24 +38,25 @@ def getUser(userId):
                 {"Content-Type": "application/json"})
 
 
-@app.route("/patients", methods=['GET'])
-def getPatientsCollection():
+@app.route("/customers", methods=['GET'])
+def getCustomersCollection():
     sleep(app.config['DELAY'])
-    patients = db.getPatients(searchName=request.args.get('name'),
-                              nurseId=request.args.get('nurseId'))
+    customers = db.getCustomers(searchName=request.args.get('name'),
+                                salesId=request.args.get('salesId'))
 
-    return jsonify(patients)
+    return jsonify(customers)
 
 
-@app.route("/patients/<string:patientId>", methods=['GET'])
-def getPatient(patientId):
+@app.route("/customers/<string:customerId>", methods=['GET'])
+def getCustomer(customerId):
     sleep(app.config['DELAY'])
     try:
-        return jsonify(db.getPatients(patientId=patientId))
+        return jsonify(db.getCustomers(customerId=customerId))
     except KeyError:
         return (jsonify(
                     {"type": "ResourceNotFound",
-                     "message": "Patient ID {} not found".format(patientId)}),
+                     "message": "Customer ID {} not found".format(
+                         customerId)}),
                 404,
                 {"Content-Type": "application/json"})
 

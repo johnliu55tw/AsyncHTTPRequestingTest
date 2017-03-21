@@ -4,13 +4,13 @@ Users = {
         {
             "name": "John Liu",
             "id": "1",
-            "type": "nurse",
+            "type": "sales",
         },
     "2":
         {
             "name": "William Ott",
             "id": "2",
-            "type": "nurse",
+            "type": "sales",
         },
     "3":
         {
@@ -20,36 +20,36 @@ Users = {
         },
 }
 
-Patients = {
+Customers = {
     "1":
         {
             "name": "Andy Ziemmer",
             "id": "1",
-            "nurseId": "1",
+            "salesId": "1",
         },
     "2":
         {
             "name": "Michael Jordan",
             "id": "2",
-            "nurseId": "1",
+            "salesId": "1",
         },
     "3":
         {
             "name": "Kobe Bryant",
             "id": "3",
-            "nurseId": "2",
+            "salesId": "2",
         },
     "4":
         {
             "name": "Nick Kamar",
             "id": "4",
-            "nurseId": "2",
+            "salesId": "2",
         },
     "5":
         {
             "name": "Jack Bledie",
             "id": "5",
-            "nurseId": "2",
+            "salesId": "2",
         },
 }
 
@@ -71,18 +71,18 @@ def getUsers(userId=None, searchName=None, searchType=None):
     return users
 
 
-def getPatients(patientId=None, searchName=None, nurseId=None):
-    if patientId is not None:
-        return Patients[patientId]
+def getCustomers(customerId=None, searchName=None, salesId=None):
+    if customerId is not None:
+        return Customers[customerId]
 
-    patients = list(Patients.values())
+    customers = list(Customers.values())
 
     if searchName is not None:
-        patients = [patient for patient in patients
-                    if patient["name"].lower().find(searchName.lower()) >= 0]
+        customers = [customer for customer in customers
+                     if customer["name"].lower().find(searchName.lower()) >= 0]
 
-    if nurseId is not None:
-        patients = [patient for patient in patients
-                    if patient["nurseId"] == nurseId]
+    if salesId is not None:
+        customers = [customer for customer in customers
+                     if customer["salesId"] == salesId]
 
-    return patients
+    return customers
