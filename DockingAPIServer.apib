@@ -6,13 +6,13 @@ The API of getting information from the `SimpleServer.py` server.
 
 # Group Users
 
-## Users Collection [/users{?type,name}]
+## Users Collection [/users{?role,name}]
 
 ### List All Users [GET]
 
 * Parameters
 
-    * type: `manager` (string, optional) - Type of the user.
+    * role: `manager` (string, optional) - Role of the user in the system.
 
     * name: `John` (string, optional) - Name of the user.
 
@@ -22,12 +22,12 @@ The API of getting information from the `SimpleServer.py` server.
             {
                 "name": "John Liu",
                 "id": "1",
-                "type": "sales"
+                "role": "sales"
             },
             {
                 "name": "Jordan Lin",
                 "id": "2",
-                "type": "manager"
+                "role": "manager"
             }
         ]
 
@@ -44,7 +44,7 @@ The API of getting information from the `SimpleServer.py` server.
         {
             "name": "John Liu",
             "id": "1",
-            "type": "sales"
+            "role": "sales"
         }
 
 * Response 404 (application/json)

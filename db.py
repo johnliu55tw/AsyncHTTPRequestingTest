@@ -4,19 +4,19 @@ Users = {
         {
             "name": "John Liu",
             "id": "1",
-            "type": "sales",
+            "role": "sales",
         },
     "2":
         {
             "name": "William Ott",
             "id": "2",
-            "type": "sales",
+            "role": "sales",
         },
     "3":
         {
             "name": "Jordan Lin",
             "id": "3",
-            "type": "manager",
+            "role": "manager",
         },
 }
 
@@ -54,7 +54,7 @@ Customers = {
 }
 
 
-def getUsers(userId=None, searchName=None, searchType=None):
+def getUsers(userId=None, searchName=None, searchRole=None):
     if userId is not None:
         return Users[userId]
 
@@ -64,9 +64,9 @@ def getUsers(userId=None, searchName=None, searchType=None):
         users = [user for user in users
                  if user["name"].lower().find(searchName.lower()) >= 0]
 
-    if searchType is not None:
+    if searchRole is not None:
         users = [user for user in users
-                 if user["type"].lower().find(searchType.lower()) >= 0]
+                 if user["role"].lower().find(searchRole.lower()) >= 0]
 
     return users
 

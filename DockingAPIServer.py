@@ -22,7 +22,7 @@ def index():
 def getUsersCollection():
     sleep(app.config['DELAY'])
     users = db.getUsers(searchName=request.args.get('name'),
-                        searchType=request.args.get('type'))
+                        searchRole=request.args.get('role'))
     return jsonify(users)
 
 
