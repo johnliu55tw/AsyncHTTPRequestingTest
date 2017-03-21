@@ -1,8 +1,8 @@
-# Utilize the `asyncio` Module: HTTP Requests
+# Utilize the `asyncio` Module: Asynchronous HTTP Requests
 
 ## Introduction
 
-The project wants to test how convenient the `asyncio` is in transforming a bunch of synchronous HTTP requests into aysnchronous, to make them faster!
+The project wants to test how convenient the `asyncio` is for transforming a bunch of synchronous HTTP requests into aysnchronous, to make them faster!
 
 ## Dependencies
 
@@ -14,9 +14,13 @@ The project wants to test how convenient the `asyncio` is in transforming a bunc
 
 See [`requirements.txt`](./requirements.txt) for more information.
 
-## First: The HTTP Server
+## The HTTP Server
 
-First we have to build a HTTP server for which the connection testing application could requests data. Here we are going to use [API Blueprint](https://apiblueprint.org/) for designing and documenting the API, [Flask](http://flask.pocoo.org/docs/0.12/) for building the server and [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) for running the server.
+First we have to build a HTTP server from which the connection testing application could requests data. Here we are going to use [API Blueprint](https://apiblueprint.org/) for designing and documenting the API, [Flask](http://flask.pocoo.org/docs/0.12/) for building the server and [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) for running the server.
+
+### Stores What?
+
+The server stores information of a purchasing deparment in a company. It stores users which could be in different roles like salesperson and manager, and the customers details like the salesperson who is responsible for the client.
 
 ### RESTful API
 
@@ -48,9 +52,107 @@ $ bash run_uwsgi.sh
 
 Which will start the server listening on `127.0.0.1:5000` with HTTP Keep-Alive enabled. Noted that if you change the name of the Flask application (`DockingAPIServer.py`), or the code, you have to specify the correct `--wsgi-file` and `--callable` option.
 
-Noted that I installed uWSGI by `pip`. I've encounter some problem (`--wsgi-file` option not available) by install uWSGI by `pacman`.
+Noted that I installed uWSGI by `pip`. I've encounter some problem (`--wsgi-file` option not available) when I was trying to install uWSGI by `pacman`.
 
 ## The Connection Test
+
+Let's say we want to fetch customers of salesperson named "John", we first need to query the `/users` endpoint with query parameter `name=John`, then use the salesperson's `id` to query all his customers from the `/customers` endpoint with query parameter `salesId=id`.
+
+### Synchronous HTTP Request
+
+```
+import requests as reqs
+
+def syncGetCustomersFromSales(salesName):
+    session = reqs.Session()
+    sales = session.get(HOST + "/users", params={"name": salesName}).json()
+    if len(sales) == 0:
+        raise ValueError("Sales {} cannot be found from the server".format(
+            salesName))
+
+    firstMatchedId = sales[0]["id"]
+
+    customers = session.get(HOST + "/customers",
+                            params={"salesId": firstMatchedId}).json()
+    if len(customers) == 0:
+        raise ValueError("Sales {} has no customers!".format(salesName))
+
+    return customers
+```
+
+The result of running the function with `"John"` as argument should be:
+
+```
+[
+  {
+    "id": "1",
+    "name": "Andy Ziemmer",
+    "salesId": "1"
+  },
+  {
+    "id": "2",
+    "name": "Michael Jordan",
+    "salesId": "1"
+  }
+]
+```
+
+### Asynchronous HTTP Requests
+
+Here we need the `aiohttp` package to do the async requests:
+
+```
+import aiohttp
+
+async def asyncGetCustomersFromSales(salesName):
+    async with aiohttp.ClientSession() as session:
+        resp = await session.get(HOST + "/users",
+                                 params={"name": salesName})
+        sales = await resp.json()
+        if len(sales) == 0:
+            raise ValueError("Sales {} cannot be found from the server".format(
+                salesName))
+
+        firstMatchedId = sales[0]["id"]
+
+        resp = await session.get(HOST + "/customers",
+                                 params={"salesId": firstMatchedId})
+        customers = await resp.json()
+        if len(customers) == 0:
+            raise ValueError("Sales {} has no customers!".format(salesName))
+
+        return customers
+```
+
+As you can see, except those `async` and `await` syntax (and a context manager for session), the structure of the code is not that different from its synchronous brother.
+
+Because it is a **coroutine function**, we need an event loop to run it:
+
+```
+import asyncio
+
+loop = asyncio.get_event_loop()
+result = loop.run_until_complete(asyncGetCustomerFromSales("John"))
+```
+
+And the `result` will be the same:
+
+```
+[
+  {
+    "id": "1",
+    "name": "Andy Ziemmer",
+    "salesId": "1"
+  },
+  {
+    "id": "2",
+    "name": "Michael Jordan",
+    "salesId": "1"
+  }
+]
+```
+
+### Timing
 
 To Be Continue...
 
