@@ -67,9 +67,11 @@ def asynchronous(names):
 
 
 if __name__ == "__main__":
-    # Timing for multiple requests
+    # Randomly generate 10 salespersons name from the server
     salesNameList = getSalespersonNameList()
     randomSalesNames = [random.choice(salesNameList) for _ in range(10)]
+
+    # Requesting synchonously
     print("Timing for synchronous method in multiple calls...")
     firstTime = time.time()
     syncResult = synchronous(randomSalesNames)
@@ -78,6 +80,7 @@ if __name__ == "__main__":
 
     time.sleep(1)
 
+    # Requesting asynchonously
     print("Timing for asynchronous method in multiple calls...")
     loop = asyncio.get_event_loop()
     firstTime = time.time()
@@ -85,4 +88,5 @@ if __name__ == "__main__":
     endTime = time.time()
     print("Asynchronous method takes: {}s".format(endTime - firstTime))
 
+    # Make sure the results are identical
     assert syncResult == asyncResult
