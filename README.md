@@ -157,10 +157,12 @@ And the `result` will be the same:
 ]
 ```
 
-### Timing
+### Testing the Requests
 
-To Be Continue...
+Imagine that we have a list of names of 10 salespersons and we want to fetch the information of their customers.
+
+**WIP**
 
 ## Conclusion
 
-To Be Continue...
+**WIP**
