@@ -16,26 +16,27 @@ def getSalespersonNameList():
 
 
 def syncGetCustomersFromSales(salesName):
-    session = reqs.Session()
-    sales = session.get(HOST + "/users", params={"name": salesName}).json()
-    if len(sales) == 0:
-        raise ValueError("Sales {} cannot be found from the server".format(
-            salesName))
+    with reqs.Session() as session:
+        resp = session.get(HOST + "/users", params={"name": salesName})
+        sales = resp.json()
+        if len(sales) == 0:
+            raise ValueError("Sales {} cannot be found from the server".format(
+                salesName))
 
-    firstMatchedId = sales[0]["id"]
+        firstMatchedId = sales[0]["id"]
 
-    customers = session.get(HOST + "/customers",
-                            params={"salesId": firstMatchedId}).json()
-    if len(customers) == 0:
-        raise ValueError("Sales {} has no customers!".format(salesName))
+        resp = session.get(HOST + "/customers",
+                           params={"salesId": firstMatchedId})
+        customers = resp.json()
+        if len(customers) == 0:
+            raise ValueError("Sales {} has no customers!".format(salesName))
 
-    return customers
+        return customers
 
 
 async def asyncGetCustomersFromSales(salesName):
     async with aiohttp.ClientSession() as session:
-        resp = await session.get(HOST + "/users",
-                                 params={"name": salesName})
+        resp = await session.get(HOST + "/users", params={"name": salesName})
         sales = await resp.json()
         if len(sales) == 0:
             raise ValueError("Sales {} cannot be found from the server".format(
