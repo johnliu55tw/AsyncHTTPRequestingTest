@@ -79,6 +79,7 @@ if __name__ == "__main__":
     time.sleep(1)
 
     print("Timing for asynchronous method in multiple calls...")
+    loop = asyncio.get_event_loop()
     firstTime = time.time()
     asyncResult = loop.run_until_complete(asynchronous(randomSalesNames))
     endTime = time.time()
