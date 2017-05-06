@@ -67,24 +67,6 @@ def asynchronous(names):
 
 
 if __name__ == "__main__":
-    # Timing for single request
-    print("Timing for synchronous method...")
-    firstTime = time.time()
-    syncResult = syncGetCustomersFromSales("John")
-    endTime = time.time()
-    print("Synchronous method takes: {}s".format(endTime - firstTime))
-
-    time.sleep(1)
-
-    loop = asyncio.get_event_loop()
-    print("Timing for asynchronous method...")
-    firstTime = time.time()
-    asyncResult = loop.run_until_complete(asyncGetCustomersFromSales("John"))
-    endTime = time.time()
-    print("Asynchronous method takes: {}s".format(endTime - firstTime))
-
-    assert syncResult == asyncResult
-
     # Timing for multiple requests
     salesNameList = getSalespersonNameList()
     randomSalesNames = [random.choice(salesNameList) for _ in range(10)]
