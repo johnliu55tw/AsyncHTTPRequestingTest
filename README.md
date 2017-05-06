@@ -18,9 +18,9 @@ See [`requirements.txt`](./requirements.txt) for more information.
 
 First we have to build a HTTP server from which the connection testing application could requests data. Here we are going to use [API Blueprint](https://apiblueprint.org/) for designing and documenting the API, [Flask](http://flask.pocoo.org/docs/0.12/) for building the server and [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) for running the server.
 
-### Stores What?
+### For What?
 
-The server stores information of a purchasing deparment in a company. It stores users which could be in different roles like salesperson and manager, and the customers details like the salesperson who is responsible for the client.
+The server stores information of a purchasing deparment in a company. It stores users information like names and roles (salesperson, manager, etc.) and some information about the customers of the company, like the salesperson who is responsible for the client.
 
 ### RESTful API
 
@@ -56,12 +56,14 @@ Noted that I installed uWSGI by `pip`. I've encounter some problem (`--wsgi-file
 
 ## The Connection Test
 
-Let's say we want to fetch customers of salesperson named "John", we first need to query the `/users` endpoint with query parameter `name=John`, then use the salesperson's `id` to query all his customers from the `/customers` endpoint with query parameter `salesId=id`.
+Let's say we want to fetch customers of the salesperson named "John", we first need to query the `/users` endpoint with query parameter `name=John`, then use the salesperson's `id` to query all his customers from the `/customers` endpoint with query parameter `salesId=id`.
 
 ### Synchronous HTTP Request
 
 ```
 import requests as reqs
+
+HOST = 'http://localhost:5000
 
 def syncGetCustomersFromSales(salesName):
     session = reqs.Session()
