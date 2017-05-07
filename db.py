@@ -8,13 +8,13 @@ Users = {
         },
     "2":
         {
-            "name": "William Ott",
+            "name": "Bruce Lee",
             "id": "2",
             "role": "sales",
         },
     "3":
         {
-            "name": "Jordan Lin",
+            "name": "Chuck Norris",
             "id": "3",
             "role": "manager",
         },
