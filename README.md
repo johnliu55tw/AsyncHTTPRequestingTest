@@ -229,4 +229,9 @@ However, without many change of codes, the asynchronous version is almost 7 time
 
 ## Conclusion
 
-**WIP**
+
+Asynchronization allows some optimization without abusing the multi-threading or multi-processing modules and dealing with all the synchronization between those threads/processes manually, as you can see from above. Since the introducing of `async` and `await` syntax in python 3.5, it's much easier to write and read the asynchronous code instead of using the weird generator and decorator pattern to implement asynchronization.
+
+However, the API to the `asyncio` module is still incredibly complex. It has all sorts of terminologies and classes like `Future`, `Coroutine`, `Coroutine Function` and `Task`, and there are many ways to register a snippet of asynchronous code into the event loop. It took me a while comprehending all the information on the official websites and articles written by others in order to write this article.
+
+Nevertheless, `asyncio` module did provide some handy APIs for quickly implementing some network codes, like [Transports and protocols](https://docs.python.org/3/library/asyncio-protocol.html#transports-and-protocols-callback-based-api). My other github project [AsyncIOServer](https://github.com/johnliu55tw/AsyncIOServer) shows how to create a simple TCP/SSL server with `asyncio` module.
