@@ -10,9 +10,10 @@ import random
 HOST = "http://localhost:5000"
 
 
-def getSalespersonNameList():
+def getRandomSalespersons(number):
     users = reqs.get(HOST + "/users", params={"role": "sales"}).json()
-    return [user["name"] for user in users]
+    return [random.choice([user["name"] for user in users])
+            for _ in range(number)]
 
 
 def syncGetCustomersFromSales(salesName):
@@ -54,29 +55,27 @@ async def asyncGetCustomersFromSales(salesName):
 
 
 def synchronous(names):
-    result = list()
-    for name in names:
-        result.append(syncGetCustomersFromSales(name))
-    return result
+    return [syncGetCustomersFromSales(name) for name in names]
 
 
 def asynchronous(names):
+    loop = asyncio.get_event_loop()
     tasks = asyncio.gather(*[asyncGetCustomersFromSales(name)
                              for name in names])
-    return tasks
+    asyncResult = loop.run_until_complete(tasks)
+    return asyncResult
 
 
 if __name__ == "__main__":
     # Randomly generate 10 salespersons name from the server
-    salesNameList = getSalespersonNameList()
-    randomSalesNames = [random.choice(salesNameList) for _ in range(10)]
+    randomSalesNames = getRandomSalespersons(10)
 
     # Requesting synchonously
     print("Timing for synchronous method in multiple calls...")
     firstTime = time.time()
     syncResult = synchronous(randomSalesNames)
     endTime = time.time()
-    print("Synchronous method takes: {}s".format(endTime - firstTime))
+    print("Synchronous method takes: {0:.3f}s".format(endTime - firstTime))
 
     time.sleep(1)
 
@@ -84,9 +83,9 @@ if __name__ == "__main__":
     print("Timing for asynchronous method in multiple calls...")
     loop = asyncio.get_event_loop()
     firstTime = time.time()
-    asyncResult = loop.run_until_complete(asynchronous(randomSalesNames))
+    asyncResult = (asynchronous(randomSalesNames))
     endTime = time.time()
-    print("Asynchronous method takes: {}s".format(endTime - firstTime))
+    print("Asynchronous method takes: {0:.3f}s".format(endTime - firstTime))
 
     # Make sure the results are identical
     assert syncResult == asyncResult

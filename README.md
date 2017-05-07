@@ -31,7 +31,7 @@ Please see [DockingAPIServer.apib](./DockingAPIServer.apib) for more information
 Please see [DockingAPIServer.py](./DockingAPIServer.py) for more information. One thing worth noting is that, because we are doing request speed test, it is necessary to make the requests slow, acting like the server is doing something heavy, or we won't be able to see the difference. Thus, I added a `sleep` call in every routing function, and it is configurable by setting changing the line in code:
 
 ```
-app.config['DELAY'] = 0.5  # Delay in seconds
+app.config["DELAY"] = 0.5  # Delay in seconds
 ```
 
 ### uWSGI: Starting the Server!
@@ -56,14 +56,14 @@ Noted that I installed uWSGI by `pip`. I've encounter some problem (`--wsgi-file
 
 ## The Connection Test
 
-Let's say we want to fetch customers of the salesperson named "John", we first need to query the `/users` endpoint with query parameter `name=John`, then use the salesperson's `id` to query all his customers from the `/customers` endpoint with query parameter `salesId=id`.
+Let's say you want to fetch customers of the salesperson named "John", we first need to query the `/users` endpoint with query parameter `name=John`, then use the salesperson's `id` to query all his customers from the `/customers` endpoint with query parameter `salesId=id`. Therefore, 2 requests have to be made in order to fetch customers information for a salesperson.
 
 ### Synchronous HTTP Request
 
 ```
 import requests as reqs
 
-HOST = 'http://localhost:5000
+HOST = "http://localhost:5000"
 
 def syncGetCustomersFromSales(salesName):
     with reqs.Session() as session:
@@ -108,7 +108,7 @@ Here we need the `aiohttp` package to do the async requests:
 ```
 import aiohttp
 
-HOST = 'http://localhost:5000
+HOST = "http://localhost:5000"
 
 async def asyncGetCustomersFromSales(salesName):
     async with aiohttp.ClientSession() as session:
@@ -159,9 +159,73 @@ And the `result` will be the same:
 
 ### Testing the Requests
 
-Imagine that we have a list of names of 10 salespersons and we want to fetch the information of their customers.
+Imagine that we have a list of salespersons' name and we want to fetch the information of their customers. Here are functions for doing that in sync. and async. way.
 
-**WIP**
+```
+# Given a list of names, return their customers synchronously
+def synchronous(names):
+    return [syncGetCustomersFromSales(name) for name in names]
+
+
+# Given a list of names, return their customers asynchronously
+def asynchronous(names):
+    loop = asyncio.get_event_loop()
+    # asyncio.gather is required for gathering results in sequence
+    tasks = asyncio.gather(*[asyncGetCustomersFromSales(name)
+                             for name in names])
+    asyncResult = loop.run_until_complete(tasks)
+    return asyncResult
+```
+
+Apparently there are more boilerplate codes for the async. version, but trust me, it's worth it.
+
+Since I'm lazy so I want to genearte the list of names randomly from the server:
+
+```
+def getRandomSalespersons(number):
+    users = reqs.get(HOST + "/users", params={"role": "sales"}).json()
+    return [random.choice([user["name"] for user in users])
+            for _ in range(number)]
+```
+
+Now, it's time to time it!
+
+```
+# Randomly generate 10 salespersons name from the server
+randomSalesNames = getRandomSalespersons(10)
+
+# Requesting synchonously
+print("Timing for synchronous method in multiple calls...")
+firstTime = time.time()
+syncResult = synchronous(randomSalesNames)
+endTime = time.time()
+print("Synchronous method takes: {0:.3f}s".format(endTime - firstTime))
+
+time.sleep(1)
+
+# Requesting asynchonously
+print("Timing for asynchronous method in multiple calls...")
+loop = asyncio.get_event_loop()
+firstTime = time.time()
+asyncResult = (asynchronous(randomSalesNames))
+endTime = time.time()
+print("Asynchronous method takes: {0:.3f}s".format(endTime - firstTime))
+
+# Make sure the results are identical
+assert syncResult == asyncResult
+```
+
+Here's the result:
+```
+Timing for synchronous method in multiple calls...
+Synchronous method takes: 10.165s
+Timing for asynchronous method in multiple calls...
+Asynchronous method takes: 1.546s
+```
+
+The delay of the server is set to 0.5 second. Since fetching customers' information takes 2 requests to the server, so the synchronous version takes about 10 seconds to finished.
+
+However, without many change of codes, the asynchronous version is almost 7 times faster! This is the power of asychronous code :D
 
 ## Conclusion
 
